@@ -4,7 +4,7 @@
       <div class="wrapper">
         <MainMenu/>
         <Dashboard>
-          <component :is="currentComponent"/>
+          <component :is="currentComponent" :current-person="localStale.activePersonSlug"/>
         </Dashboard>
       </div>
     </div>
@@ -54,6 +54,7 @@ export default defineComponent({
     const localStale = reactive({
       activePage: PAGES.houses,
       houseMembersSlug: '',
+      activePersonSlug: '',
     });
 
     const setPage = (page: PAGES )=> {
@@ -63,6 +64,10 @@ export default defineComponent({
     const showHouseInfo = (slug: string) => {
       console.log("App --> showHouseInfo", slug);
       localStale.houseMembersSlug = slug;
+    }
+
+    const setActivePerson = (personSlug: string) => {
+      localStale.activePersonSlug = personSlug;
     }
 
     const currentComponent = computed<any>(() => {
@@ -77,6 +82,7 @@ export default defineComponent({
 
     provide('setPage', setPage);
     provide('showHouseInfo', showHouseInfo);
+    provide('setActivePerson', setActivePerson);
 
     return {
       localStale,

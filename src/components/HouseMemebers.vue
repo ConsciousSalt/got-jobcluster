@@ -20,13 +20,12 @@ export default defineComponent({
   props:['houseSlug'],
   setup(props){
     const setPage = inject<(page: PAGES)=>void>('setPage');
+    const setActivePerson = inject<(slug: string)=>void>('setActivePerson');
 
     const list = ref<ItemInfo[]>([]);
     const isLoading = ref(false);
     const itemClickHandler = (slug: string) => {
-      console.log("itemClickHandler --> ", slug);
-
-
+      setActivePerson?.(slug);
       setPage?.(PAGES.persons);
     }
 
