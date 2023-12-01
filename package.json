@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
+    "lodash": "^4.17.21",
     "vue": "^3.3.8"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
     "@vitejs/plugin-vue": "^4.5.0",
     "sass": "^1.69.5",
     "typescript": "^5.2.2",
