@@ -1,19 +1,39 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" ref="wrapper">
     <div class="content">
       <div class="header">
-        <slot></slot>
+
       </div>
+      <slot></slot>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, provide, ref} from "vue";
 
 export default defineComponent({
   name: "Dashboard",
-  setup() {}
+  setup() {
+    const wrapper = ref<null | HTMLElement>(null);
+
+    const scrollIntoView = (elementId: string) => {
+      const yOffset = -150;
+      const element = document.getElementById(elementId);
+      if (element) {
+        const y =
+            element!.getBoundingClientRect().top + window.scrollY + yOffset;
+
+        wrapper.value?.scrollTo({ top: y, behavior: "smooth" });
+      }
+    };
+
+    provide("scrollIntoView", scrollIntoView);
+
+    return {
+      wrapper
+    }
+  }
 })
 </script>
 

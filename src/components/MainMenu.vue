@@ -1,17 +1,17 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" style="height: auto; overflow: unset;">
     <button>
       <span class="material-symbols-outlined">menu</span>
     </button>
 
     <div class="commands-list">
-      <button @click="setHousesPage">
+      <button :class="{active: currentPage === PAGES.houses}" @click="setHousesPage">
         <span class="material-symbols-outlined">foundation</span>
       </button>
-      <button @click="setPersonsPage">
+      <button :class="{active: currentPage === PAGES.persons}" @click="setPersonsPage">
         <span class="material-symbols-outlined">taunt</span>
       </button>
-      <button @click="setQuotesPage">
+      <button :class="{active: currentPage === PAGES.quotes}"  @click="setQuotesPage">
         <span class="material-symbols-outlined">tooltip</span>
       </button>
     </div>
@@ -23,12 +23,25 @@
 
 <script lang="ts">
   import {defineComponent, inject} from "vue";
+  import type { PropType } from 'vue'
   import {PAGES} from "@/types.ts";
 
   export default defineComponent({
     name: "Main Menu",
+    computed: {
+      PAGES() {
+        return PAGES
+      }
+    },
+    props:{
+      currentPage:{
+        type: Object as PropType<PAGES>,
+        required: true
+      }
+    },
     setup() {
       const setPage = inject<(page: PAGES)=>void>('setPage');
+      const getRandomQuotes = inject<(count: number)=>void>('getRandomQuotes');
       const setHousesPage = () => {
         setPage?.(PAGES.houses);
       };
@@ -36,6 +49,7 @@
         setPage?.(PAGES.persons);
       };
       const setQuotesPage = () => {
+        getRandomQuotes?.(5);
         setPage?.(PAGES.quotes);
       };
 
@@ -63,5 +77,9 @@
     flex-direction: column;
     gap: 15px;
     margin-top: 10rem;
+  }
+
+  .active {
+    color: #6366f1;
   }
 </style>
