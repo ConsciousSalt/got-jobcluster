@@ -35,6 +35,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+    h3{
+      color: #6366f1;
+    }
   .list {
     display: flex;
     flex-direction: column;

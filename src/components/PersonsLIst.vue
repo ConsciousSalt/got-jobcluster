@@ -1,18 +1,23 @@
 <template>
   <h3>Persons</h3>
 
-  <div>
-    <input/>
-    <button>search</button>
+  <div class="search-box">
+    <label for="search_inpt">Search:</label>
+    <input id="search_inpt" v-model="search_str"/>
+    <button @click="search_str=''">
+      <span class="material-symbols-outlined">
+        close_small
+      </span>
+    </button>
   </div>
 
   <div>
-    <ul>
-      <li v-for="item in list" ref="itemRefs">
+    <ul class="list">
+      <li :id="item.slug" v-for="item in filteredList" ref="itemRefs">
         <button
+            v-html="item.name"
                 :class="{active: currentPerson === item.slug}"
                 @click="itemClickHandler(item.slug)">
-          {{item.name}}
         </button>
       </li>
     </ul>
@@ -20,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, inject, onMounted, ref} from "vue";
+import {computed, defineComponent, inject, onMounted, ref} from "vue";
 import {getAllCharacters} from "@/api.ts";
 import {PersonsResponse} from "@/types.ts";
 
@@ -33,31 +38,51 @@ export default defineComponent({
     }
   },
   setup(props){
+    const scrollIntoView = inject<(slug: string)=>void>("scrollIntoView");
     const setActivePerson = inject<(slug: string)=>void>('setActivePerson');
+
+    const itemRefs = ref<HTMLElement[]>([]);
     const list = ref<PersonsResponse[]>([]);
+    const search_str = ref('');
+
+    const filteredList = computed(()=>{
+      if (!Array.isArray(list.value) || !list.value.length) return [];
+      const inputValue = search_str.value.trim();
+      if (inputValue.length) {
+        const regexp = new RegExp(inputValue, 'ig');
+        return list.value.filter(el=>regexp.test(el.name)).map(el=>{
+          const index = el.name.toLowerCase().indexOf(inputValue.toLowerCase());
+          const highlightedText =
+              el.name.substring(0, index) +
+              `<span style="background-color: #637087; font-weight: bold;">${el.name.substring(index, index + inputValue.length)}</span>` +
+              el.name.substring(index + inputValue.length);
+
+          return {...el,
+            name: highlightedText
+          };
+        });
+      }
+
+      return list.value;
+    })
+
     const itemClickHandler = (slug: string) => {
       setActivePerson?.(slug);
     }
-
-    const itemRefs = ref<HTMLElement[]>([]);
 
     onMounted(async ()=>{
       list.value = await getAllCharacters();
 
       setTimeout(()=>{
-        if (props.currentPerson) {
-          const currentRefIndex = list.value.findIndex(ref=>ref.slug === props.currentPerson);
-          if (currentRefIndex >= 0) {
-            const el = itemRefs.value[currentRefIndex];
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }
-        }
+        if (props.currentPerson) scrollIntoView?.(props.currentPerson);
       }, 300);
     });
 
     return {
       list,
+      filteredList,
       itemRefs,
+      search_str,
       itemClickHandler
     }
   }
@@ -65,7 +90,39 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  .active {
+  .active, h3, label {
     color: #6366f1;
+  }
+
+  .search-box {
+    display: flex;
+    flex-direction: row;
+
+    input {
+      flex-grow: 1;
+      flex-basis: 8rem;
+      max-width: 8rem;
+    }
+    button {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  .list {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 3rem 0 ; /* Remove margins */
+    li{
+      width: 100%;
+      margin: 0.3rem 0;
+      padding: 0.1rem;
+      button {
+        width: 100%;
+      }
+    }
   }
 </style>
