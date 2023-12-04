@@ -50,12 +50,19 @@ export default defineComponent({
       const inputValue = search_str.value.trim();
       if (inputValue.length) {
         const regexp = new RegExp(inputValue, 'ig');
-        return list.value.filter(el=>regexp.test(el.name)).map(el=>{
-          const index = el.name.toLowerCase().indexOf(inputValue.toLowerCase());
-          const highlightedText =
-              el.name.substring(0, index) +
-              `<span style="background-color: #637087; font-weight: bold;">${el.name.substring(index, index + inputValue.length)}</span>` +
-              el.name.substring(index + inputValue.length);
+        return list.value.filter(el=>regexp.test(el.name) || regexp.test(el.house?.name||'')).map(el=>{
+          let highlightedText;
+          if (regexp.test(el.name)) {
+            const index = el.name.toLowerCase().indexOf(inputValue.toLowerCase());
+            highlightedText =
+                el.name.substring(0, index) +
+                `<span style="background-color: #637087; font-weight: bold;">${el.name.substring(index, index + inputValue.length)}</span>` +
+                el.name.substring(index + inputValue.length);
+          } else {
+            highlightedText =
+                el.name +
+                `<span style="background-color: #637087; font-weight: bold;"> of ${el.house?.name}</span>`;
+          }
 
           return {...el,
             name: highlightedText
