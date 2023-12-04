@@ -9,13 +9,13 @@ export type ItemInfo = {
   slug: string
 }
 
-export type HouseListResponseType = ItemInfo & {
+export type HouseType = ItemInfo & {
   members: ItemInfo[]
 }
 
-export type PersonsResponse = ItemInfo & {house: ItemInfo} & {quotes: string[]};
+export type PersonType = ItemInfo & {house: ItemInfo} & {quotes: string[]};
 
-export type PersonDetailedInfo = {
+export type PersonDetailedInfoType = {
   id: number,
   firstName: string,
   lastName: string,
@@ -26,7 +26,7 @@ export type PersonDetailedInfo = {
   imageUrl: string
 }
 
-export type Quote = {
-  character?:PersonsResponse,
+export type QuoteType = {
+  character?:PersonType,
   sentence: string
 }

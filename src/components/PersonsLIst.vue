@@ -1,17 +1,7 @@
 <template>
   <h3>Persons</h3>
-
-  <div class="search-box">
-    <label for="search_inpt">Search:</label>
-    <input id="search_inpt" v-model="search_str"/>
-    <button @click="search_str=''">
-      <span class="material-symbols-outlined">
-        close_small
-      </span>
-    </button>
-  </div>
-
-  <div>
+  <SearchBar v-model="search_str"/>
+   <div>
     <ul class="list">
       <li :id="item.slug" v-for="item in filteredList" ref="itemRefs">
         <button
@@ -25,12 +15,19 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, inject, onMounted, ref} from "vue";
+import {defineComponent, inject, onMounted, ref} from "vue";
+
+import SearchBar from "@/components/SearchBar.vue";
+import {useFilteredList, personsMapFunction} from "@/mixins/useFilteredList.ts";
+
 import {getAllCharacters} from "@/api.ts";
-import {PersonsResponse} from "@/types.ts";
+import {PersonType} from "@/types.ts";
 
 export default defineComponent({
   name: "Persons List",
+  components:{
+    SearchBar,
+  },
   props:{
     currentPerson:{
       type: String,
@@ -42,36 +39,10 @@ export default defineComponent({
     const setActivePerson = inject<(slug: string)=>void>('setActivePerson');
 
     const itemRefs = ref<HTMLElement[]>([]);
-    const list = ref<PersonsResponse[]>([]);
+    const list = ref<PersonType[]>([]);
     const search_str = ref('');
 
-    const filteredList = computed(()=>{
-      if (!Array.isArray(list.value) || !list.value.length) return [];
-      const inputValue = search_str.value.trim();
-      if (inputValue.length) {
-        const regexp = new RegExp(inputValue, 'ig');
-        return list.value.filter(el=>regexp.test(el.name) || regexp.test(el.house?.name||'')).map(el=>{
-          let highlightedText;
-          if (regexp.test(el.name)) {
-            const index = el.name.toLowerCase().indexOf(inputValue.toLowerCase());
-            highlightedText =
-                el.name.substring(0, index) +
-                `<span style="background-color: #637087; font-weight: bold;">${el.name.substring(index, index + inputValue.length)}</span>` +
-                el.name.substring(index + inputValue.length);
-          } else {
-            highlightedText =
-                el.name +
-                `<span style="background-color: #637087; font-weight: bold;"> of ${el.house?.name}</span>`;
-          }
-
-          return {...el,
-            name: highlightedText
-          };
-        });
-      }
-
-      return list.value;
-    })
+    const filteredList = useFilteredList(list, personsMapFunction, search_str);
 
     const itemClickHandler = (slug: string) => {
       setActivePerson?.(slug);
@@ -97,26 +68,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-  .active, h3, label {
+  .active, h3 {
     color: #6366f1;
-  }
-
-  .search-box {
-    display: flex;
-    flex-direction: row;
-
-    input {
-      flex-grow: 1;
-      flex-basis: 8rem;
-      max-width: 8rem;
-    }
-    button {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
   }
 
   .list {

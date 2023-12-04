@@ -1,8 +1,8 @@
 import get from "axios";
-import type {HouseListResponseType} from "@/types.ts";
-import {ItemInfo, PersonDetailedInfo, PersonsResponse, Quote} from "@/types.ts";
+import type {HouseType} from "@/types.ts";
+import {ItemInfo, PersonDetailedInfoType, PersonType, QuoteType} from "@/types.ts";
 
-export async function getHousesList(): Promise<HouseListResponseType[]> {
+export async function getHousesList(): Promise<HouseType[]> {
   try {
     const response = await get('https://api.gameofthronesquotes.xyz/v1/houses');
     if (response.status === 200) {
@@ -30,7 +30,7 @@ export async function getHouseDetails(slug: string): Promise<ItemInfo[]> {
   }
 }
 
-export async function getAllCharacters(): Promise<PersonsResponse[]> {
+export async function getAllCharacters(): Promise<PersonType[]> {
   try{
     const response = await get('https://api.gameofthronesquotes.xyz/v1/characters');
     if (response.status === 200) {
@@ -43,7 +43,7 @@ export async function getAllCharacters(): Promise<PersonsResponse[]> {
   }
 }
 
-export async function getCharacterDetails(slug: string): Promise<PersonsResponse|{}> {
+export async function getCharacterDetails(slug: string): Promise<PersonType|{}> {
   try {
     const response = await get(`https://api.gameofthronesquotes.xyz/v1/character/${slug}`);
 
@@ -57,7 +57,7 @@ export async function getCharacterDetails(slug: string): Promise<PersonsResponse
   }
 }
 
-export async function getFullCharactersInfo(): Promise<PersonDetailedInfo[]> {
+export async function getFullCharactersInfo(): Promise<PersonDetailedInfoType[]> {
   try {
 
     const response = await get('https://thronesapi.com/api/v2/Characters');
@@ -72,7 +72,7 @@ export async function getFullCharactersInfo(): Promise<PersonDetailedInfo[]> {
   }
 }
 
-export async function getRandomQuotes(count: number): Promise<Quote[]> {
+export async function getRandomQuotes(count: number): Promise<QuoteType[]> {
   try {
 
     const response = await get(`https://api.gameofthronesquotes.xyz/v1/random/${count}`);

@@ -21,7 +21,7 @@
 <script lang="ts">
 import {computed, defineComponent, inject, ref, watch} from "vue";
 import {getCharacterDetails} from "@/api.ts";
-import {PAGES, PersonDetailedInfo, PersonsResponse, Quote} from "@/types.ts";
+import {PAGES, PersonDetailedInfoType, PersonType, QuoteType} from "@/types.ts";
 
 import QuotesList from "@/components/QuotesList.vue";
 
@@ -41,13 +41,13 @@ export default defineComponent({
     const setPage = inject<(page: PAGES)=>void>('setPage');
     const showHouseInfo = inject<(slug: string)=>void>('showHouseInfo');
 
-    const personData = ref<PersonsResponse>({} as any as PersonsResponse);
-    const personQuotes = ref<Quote[]>([]);
-    const personDetails = ref<Partial<PersonDetailedInfo>>({});
+    const personData = ref<PersonType>({} as any as PersonType);
+    const personQuotes = ref<QuoteType[]>([]);
+    const personDetails = ref<Partial<PersonDetailedInfoType>>({});
 
     const activePersonChangeHandler = async () => {
       if (props.activePerson) {
-        personData.value = (await getCharacterDetails(props.activePerson)) as any as PersonsResponse;
+        personData.value = (await getCharacterDetails(props.activePerson)) as any as PersonType;
         personQuotes.value = getRandomItems();
         personDetails.value = getPersonDetailedInfo?.(personData.value.name) || {};
       }

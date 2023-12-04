@@ -27,13 +27,13 @@
 
 <script lang="ts">
 import {defineComponent, inject, PropType} from "vue";
-import {PAGES, Quote} from "@/types.ts";
+import {PAGES, QuoteType} from "@/types.ts";
 
 export default defineComponent({
   name: "Quotes List",
   props: {
     quotesList:{
-      type: Object as PropType<Quote[]>,
+      type: Object as PropType<QuoteType[]>,
       required: true
     },
     showPersonName:{

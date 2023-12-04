@@ -4,7 +4,7 @@
       <div class="wrapper">
         <MainMenu :current-page="localStale.activePage"/>
         <Dashboard :class="{'hidden-dashboard': !currentComponent}">
-          <component :is="currentComponent" :current-person="localStale.activePersonSlug"/>
+          <component :is="currentComponent" :current-person="localStale.activePersonSlug" :current-house="localStale.houseMembersSlug"/>
         </Dashboard>
       </div>
     </div>
@@ -23,7 +23,7 @@
 import {computed, defineComponent, onMounted, provide, reactive} from "vue";
 import {intersection} from "lodash";
 
-import {PAGES, PersonDetailedInfo, Quote} from "@/types.ts";
+import {PAGES, PersonDetailedInfoType, QuoteType} from "@/types.ts";
 import {getFullCharactersInfo, getRandomQuotes} from "@/api.ts";
 
 import MainMenu from '@/components/MainMenu.vue'
@@ -67,8 +67,8 @@ export default defineComponent({
       activePage: PAGES;
       houseMembersSlug: string;
       activePersonSlug: string;
-      fullCharactersInfo: PersonDetailedInfo[];
-      randomQuotes: Quote[]
+      fullCharactersInfo: PersonDetailedInfoType[];
+      randomQuotes: QuoteType[]
     }>({
       activePage: PAGES.houses,
       houseMembersSlug: '',
